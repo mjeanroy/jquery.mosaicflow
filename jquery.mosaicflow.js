@@ -1,46 +1,53 @@
-/**
- * Mosaic Flow
- *
- * Pinterest like responsive image grid that doesn’t sucks
- *
- * @requires jQuery
- * @author Artem Sapegin
- * @copyright 2012 Artem Sapegin, http://sapegin.me
- * @license MIT
- */
-
-/*jshint browser:true, jquery:true, white:false, smarttabs:true */
-/*global jQuery:false, define:false*/
-(function(factory) {  // Try to register as an anonymous AMD module
-	if (typeof define === 'function' && define.amd) {
-		define(['jquery'], factory);
+(function (global, factory) {
+	if (typeof define === "function" && define.amd) {
+		define('MosaicFlow', ['jquery'], factory);
+	} else if (typeof exports !== "undefined") {
+		factory(require('jquery'));
+	} else {
+		var mod = {
+			exports: {}
+		};
+		factory(global.jQuery);
+		global.MosaicFlow = mod.exports;
 	}
-	else {
-		factory(jQuery);
-	}
-}(function($) {
+})(this, function (_jquery) {
 	'use strict';
-	var cnt = 0;
 
-	$.fn.mosaicflow = function(options) {
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	_jquery2.default.fn.mosaicflow = function (options) {
 		var args = Array.prototype.slice.call(arguments, 0);
 
-		return this.each(function() {
-			var elm = $(this);
+		return this.each(function () {
+			var elm = (0, _jquery2.default)(this);
 			var data = elm.data('mosaicflow');
 
 			if (!data) {
-				options = $.extend({}, $.fn.mosaicflow.defaults, options, dataToOptions(elm));
+				options = _jquery2.default.extend({}, _jquery2.default.fn.mosaicflow.defaults, options, dataToOptions(elm));
 				data = new Mosaicflow(elm, options);
 				elm.data('mosaicflow', data);
-			}
-			else if (typeof options === 'string') {
+			} else if (typeof options === 'string') {
 				data[options](args[1]);
 			}
 		});
-	};
+	}; /**
+     * Mosaic Flow
+     *
+     * Pinterest like responsive image grid that doesn’t sucks
+     *
+     * @requires jQuery
+     * @author Artem Sapegin
+     * @copyright 2012 Artem Sapegin, http://sapegin.me
+     * @license MIT
+     */
 
-	$.fn.mosaicflow.defaults = {
+	_jquery2.default.fn.mosaicflow.defaults = {
 		itemSelector: '> *',
 		columnClass: 'mosaicflow__column',
 		minItemWidth: 240,
@@ -48,6 +55,8 @@
 		itemHeightCalculation: 'auto',
 		threshold: 40
 	};
+
+	var cnt = 0;
 
 	function Mosaicflow(container, options) {
 		this.container = container;
@@ -59,22 +68,22 @@
 	}
 
 	Mosaicflow.prototype = {
-		init: function() {
+		init: function init() {
 			this.__uid = cnt++;
 			this.__uidItemCounter = 0;
 			this.items = this.container.find(this.options.itemSelector);
-			this.columns = $([]);
+			this.columns = (0, _jquery2.default)([]);
 			this.columnsHeights = [];
 			this.itemsHeights = {};
-			this.tempContainer = $('<div>').css({'visibility': 'hidden', 'width': '100%'});
+			this.tempContainer = (0, _jquery2.default)('<div>').css({ 'visibility': 'hidden', 'width': '100%' });
 			this.workOnTemp = false;
 			this.autoCalculation = this.options.itemHeightCalculation === 'auto';
 
 			this.container.append(this.tempContainer);
 
 			var that = this;
-			this.items.each(function() {
-				var elm = $(this);
+			this.items.each(function () {
+				var elm = (0, _jquery2.default)(this);
 				var id = elm.attr('id');
 				if (!id) {
 					// Generate an unique id
@@ -85,20 +94,18 @@
 
 			this.container.css('visibility', 'hidden');
 			if (this.autoCalculation) {
-				$(window).on('load', $.proxy(this.refill, this));
-			}
-			else {
+				(0, _jquery2.default)(window).on('load', _jquery2.default.proxy(this.refill, this));
+			} else {
 				this.refill();
 			}
-			$(window).resize($.proxy(this.refill, this));
+			(0, _jquery2.default)(window).resize(_jquery2.default.proxy(this.refill, this));
 		},
 
-		refill: function() {
+		refill: function refill() {
 			this.container.trigger('mosaicflow-fill');
 			this.numberOfColumns = Math.floor(this.container.width() / this.options.minItemWidth);
 			// Always keep min columns number
-			if (this.numberOfColumns < this.options.minColumns)
-				this.numberOfColumns = this.options.minColumns;
+			if (this.numberOfColumns < this.options.minColumns) this.numberOfColumns = this.options.minColumns;
 
 			var needToRefill = this.ensureColumns();
 			if (needToRefill) {
@@ -113,7 +120,7 @@
 			this.container.trigger('mosaicflow-filled');
 		},
 
-		ensureColumns: function() {
+		ensureColumns: function ensureColumns() {
 			var createdCnt = this.columns.filter(':visible').length;
 			var calculatedCnt = this.numberOfColumns;
 
@@ -122,14 +129,13 @@
 			if (calculatedCnt > createdCnt) {
 				var neededCnt = calculatedCnt - createdCnt;
 				for (var columnIdx = 0; columnIdx < neededCnt; columnIdx++) {
-					var column = $('<div>', {
+					var column = (0, _jquery2.default)('<div>', {
 						'class': this.options.columnClass
 					});
 
 					this.workingContainer.append(column);
 				}
-			}
-			else if (calculatedCnt < createdCnt) {
+			} else if (calculatedCnt < createdCnt) {
 				var lastColumn = createdCnt;
 				while (calculatedCnt <= lastColumn) {
 					// We can't remove columns here becase it will remove items to. So we hide it and will remove later.
@@ -143,14 +149,14 @@
 
 			if (calculatedCnt !== createdCnt) {
 				this.columns = this.workingContainer.find('.' + this.options.columnClass);
-				this.columns.css('width', (100 / calculatedCnt) + '%');
+				this.columns.css('width', 100 / calculatedCnt + '%');
 				return true;
 			}
 
 			return false;
 		},
 
-		fillColumns: function() {
+		fillColumns: function fillColumns() {
 			var columnsCnt = this.numberOfColumns;
 			var itemsCnt = this.items.length;
 
@@ -165,8 +171,7 @@
 					if (this.autoCalculation) {
 						// Check height after being placed in its column
 						height = item.outerHeight();
-					}
-					else {
+					} else {
 						// Read img height attribute
 						height = parseInt(item.find('img').attr('height'), 10);
 					}
@@ -184,10 +189,10 @@
 			this.container.trigger('mosaicflow-layout');
 		},
 
-		levelBottomEdge: function(itemsHeights, columnsHeights) {
+		levelBottomEdge: function levelBottomEdge(itemsHeights, columnsHeights) {
 			while (true) {
-				var lowestColumn = $.inArray(Math.min.apply(null, columnsHeights), columnsHeights);
-				var highestColumn = $.inArray(Math.max.apply(null, columnsHeights), columnsHeights);
+				var lowestColumn = _jquery2.default.inArray(Math.min.apply(null, columnsHeights), columnsHeights);
+				var highestColumn = _jquery2.default.inArray(Math.max.apply(null, columnsHeights), columnsHeights);
 				if (lowestColumn === highestColumn) return;
 
 				var lastInHighestColumn = this.columns.eq(highestColumn).children().last();
@@ -206,9 +211,9 @@
 			}
 		},
 
-		add: function(elm) {
+		add: function add(elm) {
 			this.container.trigger('mosaicflow-item-add', [elm]);
-			var lowestColumn = $.inArray(Math.min.apply(null, this.columnsHeights), this.columnsHeights);
+			var lowestColumn = _jquery2.default.inArray(Math.min.apply(null, this.columnsHeights), this.columnsHeights);
 			var height = 0;
 
 			if (this.autoCalculation) {
@@ -224,10 +229,10 @@
 
 				var inlineImages = elm.find('img');
 				if (inlineImages.length !== 0) {
-					inlineImages.each(function() {
-						var image = $(this);
+					inlineImages.each(function () {
+						var image = (0, _jquery2.default)(this);
 						var imageSizes = getImageSizes(image);
-						var actualHeight = (image.width() * imageSizes.height) / imageSizes.width;
+						var actualHeight = image.width() * imageSizes.height / imageSizes.width;
 
 						height += actualHeight;
 					});
@@ -237,8 +242,7 @@
 					position: 'static',
 					visibility: 'visible'
 				});
-			}
-			else {
+			} else {
 				height = parseInt(elm.find('img').attr('height'), 10);
 			}
 
@@ -251,7 +255,7 @@
 			// Item needs to be placed at the end of this.items to keep order of elements
 			var itemsArr = this.items.toArray();
 			itemsArr.push(elm);
-			this.items = $(itemsArr);
+			this.items = (0, _jquery2.default)(itemsArr);
 
 			this.itemsHeights[elm.attr('id')] = height;
 			this.columnsHeights[lowestColumn] += height;
@@ -262,7 +266,7 @@
 			this.container.trigger('mosaicflow-item-added', [elm]);
 		},
 
-		remove: function(elm) {
+		remove: function remove(elm) {
 			this.container.trigger('mosaicflow-item-remove', [elm]);
 			var column = elm.parents('.' + this.options.columnClass);
 
@@ -278,10 +282,10 @@
 			this.container.trigger('mosaicflow-item-removed', [elm]);
 		},
 
-		empty: function() {
+		empty: function empty() {
 			var columnsCnt = this.numberOfColumns;
 
-			this.items = $([]);
+			this.items = (0, _jquery2.default)([]);
 			this.itemsHeights = {};
 
 			for (var columnIdx = 0; columnIdx < columnsCnt; columnIdx++) {
@@ -292,15 +296,14 @@
 			this.container.trigger('mosaicflow-layout');
 		},
 
-		recomputeHeights: function() {
+		recomputeHeights: function recomputeHeights() {
 			function computeHeight(idx, item) {
-				item = $(item);
+				item = (0, _jquery2.default)(item);
 				var height = 0;
 				if (that.autoCalculation) {
 					// Check height after being placed in its column
 					height = item.outerHeight();
-				}
-				else {
+				} else {
 					// Read img height attribute
 					height = parseInt(item.find('img').attr('height'), 10);
 				}
@@ -320,7 +323,7 @@
 			}
 		},
 
-		generateUniqueId: function() {
+		generateUniqueId: function generateUniqueId() {
 			// Increment the counter
 			this.__uidItemCounter++;
 
@@ -360,6 +363,7 @@
 	}
 
 	// Auto init
-	$(function() { $('.mosaicflow').mosaicflow(); });
-
-}));
+	(0, _jquery2.default)(function () {
+		(0, _jquery2.default)('.mosaicflow').mosaicflow();
+	});
+});

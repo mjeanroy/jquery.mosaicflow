@@ -1,0 +1,18 @@
+{
+  "moduleId": "MosaicFlow",
+
+  "presets": [
+    ["es2015", {
+      "loose": true
+    }]
+  ],
+
+  "plugins": [
+    ["transform-es2015-modules-umd", {
+      "loose": true,
+      "globals": {
+        "jquery": "jQuery"
+      }
+    }]
+  ]
+}

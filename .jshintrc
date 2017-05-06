@@ -1,5 +1,6 @@
 {
 	"browser": true,
+	"esnext": true,
 	"jquery": true,
 	"white": false,
 	"smarttabs": true,
@@ -10,6 +11,8 @@
 	"undef": true,
 	"camelcase": true,
 	"globals": {
-		"Modernizr": true
+		"Modernizr": true,
+		"define": true,
+		"require": true
 	}
 }

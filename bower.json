@@ -1,7 +1,9 @@
 {
   "name": "jquery.mosaicflow",
   "version": "0.2.5",
-  "main": ["./jquery.mosaicflow.js"],
+  "main": "./jquery.mosaicflow.js",
+  "module": "jquery.mosaicflow.m.js",
+  "jsnext:main": "jquery.mosaicflow.m.js",
   "dependencies": {
     "jquery": ">=1.7"
   }
